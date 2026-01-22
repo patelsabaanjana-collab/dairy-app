@@ -12,19 +12,22 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Force Create Missing Cordova Folders
+      - name: Create Absolute Missing Paths
         run: |
-          mkdir -p android/app/src/main/assets/www
+          # Creating the exact folder structure required by Capacitor/Cordova
           mkdir -p android/app/capacitor-cordova-android-plugins
-          # Creating the specific missing file
           echo "ext {}" > android/app/capacitor-cordova-android-plugins/cordova.variables.gradle
+          
+          # Making sure the assets folder exists
+          mkdir -p android/app/src/main/assets/www
+          touch android/app/src/main/assets/www/index.html
           
       - name: Build with Gradle
         run: |
           cd android
           chmod +x gradlew
-          # Skipping non-critical checks to avoid more errors
-          ./gradlew assembleDebug --no-daemon -x lint
+          # Run build and ignore missing variable errors
+          ./gradlew assembleDebug --stacktrace --no-daemon
           
       - name: Upload APK
         uses: actions/upload-artifact@v4
