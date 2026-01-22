@@ -6,31 +6,31 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
+      - name: set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          
       - name: set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Force Create All Missing Gradle Files
+      - name: Install Dependencies & Sync
         run: |
-          # Sabhi possible paths par file create karna
-          mkdir -p android/app/capacitor-cordova-android-plugins
-          mkdir -p android/capacitor-cordova-android-plugins
-          
-          echo "ext {}" > android/app/capacitor-cordova-android-plugins/cordova.variables.gradle
-          echo "ext {}" > android/capacitor-cordova-android-plugins/cordova.variables.gradle
-          
-          # Assets folder fix
+          npm install
+          # Capacitor folders ensure karna
           mkdir -p android/app/src/main/assets/www
-          echo "<html><body>Dairy App</body></html>" > android/app/src/main/assets/www/index.html
+          echo "<html></html>" > android/app/src/main/assets/www/index.html
+          # Plugins ko sync karna
+          npx cap sync android
           
       - name: Build with Gradle
         run: |
           cd android
           chmod +x gradlew
-          # Build command with error skipping
-          ./gradlew assembleDebug --no-daemon -x lint
+          ./gradlew assembleDebug --no-daemon
           
       - name: Upload APK
         uses: actions/upload-artifact@v4
