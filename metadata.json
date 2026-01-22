@@ -1,0 +1,8 @@
+
+{
+  "name": "Dairy Wala",
+  "description": "A comprehensive dairy farm management application for tracking cows, calves, feed, milk production, genetics, and financial reporting.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
